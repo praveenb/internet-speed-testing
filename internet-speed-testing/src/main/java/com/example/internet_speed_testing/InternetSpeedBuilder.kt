@@ -1,5 +1,6 @@
 package com.example.internet_speed_testing
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.AsyncTask
 import android.util.Log
@@ -7,6 +8,7 @@ import fr.bmartel.speedtest.SpeedTestReport
 import fr.bmartel.speedtest.SpeedTestSocket
 import fr.bmartel.speedtest.inter.ISpeedTestListener
 import fr.bmartel.speedtest.model.SpeedTestError
+import fr.bmartel.speedtest.utils.SpeedTestUtils
 
 class InternetSpeedBuilder(var activity: Activity) {
 
@@ -84,6 +86,16 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                     }*/
 
+                    progressModel.progressTotal = 50f
+                    progressModel.progressUpload= 100f
+                    progressModel.downloadSpeed = report.transferRateBit
+
+                    activity.runOnUiThread {
+                        javaListener.onDownloadProgress(countTestSpeed, progressModel)
+                        javaListener.onTotalProgress(countTestSpeed, progressModel)
+
+                    }
+
                     startTestUpload()
 
                 }
@@ -104,7 +116,7 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                     activity.runOnUiThread {
                         javaListener.onDownloadProgress(countTestSpeed, progressModel)
-                        javaListener.onTotalProgress(countTestSpeed, progressModel)
+                        //javaListener.onTotalProgress(countTestSpeed, progressModel)
                     }
 
                 }
@@ -116,6 +128,7 @@ class InternetSpeedBuilder(var activity: Activity) {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     inner class SpeedUploadTestTask : AsyncTask<Void, Void, Void>() {
 
         override fun doInBackground(vararg params: Void): Void? {
@@ -130,14 +143,14 @@ class InternetSpeedBuilder(var activity: Activity) {
                     Log.v("speedtest Upload" + countTestSpeed, "[COMPLETED] rate in octet/s : " + report.transferRateOctet)
                     Log.v("speedtest Upload" + countTestSpeed, "[COMPLETED] rate in bit/s   : " + report.transferRateBit)
 
-                    /*progressModel.progressTotal = 100f
+                    progressModel.progressTotal = 100f
                     progressModel.progressUpload= 100f
                     progressModel.uploadSpeed = report.transferRateBit
 
                     activity.runOnUiThread {
                         javaListener.onUploadProgress(countTestSpeed, progressModel)
                         javaListener.onTotalProgress(countTestSpeed, progressModel)
-                    }*/
+                    }
 
 
                     countTestSpeed++
@@ -164,7 +177,7 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                         if (countTestSpeed < LIMIT) {
                             javaListener.onUploadProgress(countTestSpeed, progressModel)
-                            javaListener.onTotalProgress(countTestSpeed, progressModel)
+                           // javaListener.onTotalProgress(countTestSpeed, progressModel)
 
                         }
                     }
@@ -172,7 +185,12 @@ class InternetSpeedBuilder(var activity: Activity) {
                 }
             })
 
-            speedTestSocket.startDownload(url)
+            val fileName = SpeedTestUtils.generateFileName() + ".txt"
+            Log.v("speedtest", "fileName : $fileName")
+            //speedTestSocket.startUpload("ftp://speedtest.tele2.net/upload/$fileName", 1000000)
+            speedTestSocket.startUpload("http://speedtest.tele2.net/upload.php", 1000000)
+            //speedTestSocket.startDownload(url)
+
 
             return null
         }

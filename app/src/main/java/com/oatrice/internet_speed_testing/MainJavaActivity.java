@@ -58,7 +58,7 @@ public class MainJavaActivity extends AppCompatActivity {
 
             }
         });
-        builder.start("https://www.skylinesynergy.net/AppTest/app-speed-test.zip","https://pccsuk.com/empty.php", 1);
+        builder.start("","", 1);//please use Skyline server urls
 
         //checkSpeed();
 

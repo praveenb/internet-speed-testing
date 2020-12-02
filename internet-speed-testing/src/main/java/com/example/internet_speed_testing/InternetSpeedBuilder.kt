@@ -94,7 +94,7 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                     activity.runOnUiThread {
                         javaListener.onDownloadProgress(countTestSpeed, progressModel)
-                        //javaListener.onTotalProgress(countTestSpeed, progressModel)
+                        javaListener.onTotalProgress(countTestSpeed, progressModel)
 
                     }
 
@@ -179,7 +179,7 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                         if (countTestSpeed < LIMIT) {
                             javaListener.onUploadProgress(countTestSpeed, progressModel)
-                            javaListener.onTotalProgress(countTestSpeed, progressModel)
+                            //javaListener.onTotalProgress(countTestSpeed, progressModel)
 
                         }
                     }

@@ -14,15 +14,17 @@ class InternetSpeedBuilder(var activity: Activity) {
 
     private var countTestSpeed = 0
     private var LIMIT = 3
-    lateinit var url: String
+    lateinit var downloadUrl: String
+    lateinit var uploadUrl: String
     lateinit var javaListener: OnEventInternetSpeedListener
     lateinit var onDownloadProgressListener: ()->Unit
     lateinit var onUploadProgressListener: ()->Unit
     lateinit var onTotalProgressListener: ()->Unit
     private lateinit var progressModel: ProgressionModel
 
-    fun start(url: String, limitCount: Int) {
-        this.url = url
+    fun start(downloadUrl: String,uploadUrl: String, limitCount: Int) {
+        this.downloadUrl = downloadUrl
+        this.uploadUrl = uploadUrl
         this.LIMIT = limitCount
         startTestDownload()
     }
@@ -92,7 +94,7 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                     activity.runOnUiThread {
                         javaListener.onDownloadProgress(countTestSpeed, progressModel)
-                        javaListener.onTotalProgress(countTestSpeed, progressModel)
+                        //javaListener.onTotalProgress(countTestSpeed, progressModel)
 
                     }
 
@@ -116,13 +118,13 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                     activity.runOnUiThread {
                         javaListener.onDownloadProgress(countTestSpeed, progressModel)
-                        //javaListener.onTotalProgress(countTestSpeed, progressModel)
+                       // javaListener.onTotalProgress(countTestSpeed, progressModel)
                     }
 
                 }
             })
 
-            speedTestSocket.startDownload(url)
+            speedTestSocket.startDownload(downloadUrl)
 
             return null
         }
@@ -177,7 +179,7 @@ class InternetSpeedBuilder(var activity: Activity) {
 
                         if (countTestSpeed < LIMIT) {
                             javaListener.onUploadProgress(countTestSpeed, progressModel)
-                           // javaListener.onTotalProgress(countTestSpeed, progressModel)
+                            javaListener.onTotalProgress(countTestSpeed, progressModel)
 
                         }
                     }
@@ -185,10 +187,10 @@ class InternetSpeedBuilder(var activity: Activity) {
                 }
             })
 
-            val fileName = SpeedTestUtils.generateFileName() + ".txt"
-            Log.v("speedtest", "fileName : $fileName")
+           // val fileName = SpeedTestUtils.generateFileName() + ".txt"
+            Log.v("speedtest", "uploadUrl : $uploadUrl")
             //speedTestSocket.startUpload("ftp://speedtest.tele2.net/upload/$fileName", 1000000)
-            speedTestSocket.startUpload("http://speedtest.tele2.net/upload.php", 1000000)
+            speedTestSocket.startUpload(uploadUrl, 1000000)
             //speedTestSocket.startDownload(url)
 
 

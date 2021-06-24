@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.internet_speed_testing.InternetSpeedBuilder;
 import com.example.internet_speed_testing.ProgressionModel;
@@ -21,48 +23,67 @@ import fr.bmartel.speedtest.utils.SpeedTestUtils;
 public class MainJavaActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private Button btnStart,btnStop;
     private Adapter adapter;
-
+    InternetSpeedBuilder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerview);
+        btnStart = findViewById(R.id.btnStart);
+        btnStop = findViewById(R.id.btnStop);
 
         adapter = new Adapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        InternetSpeedBuilder builder = new InternetSpeedBuilder(this);
-        builder.setOnEventInternetSpeedListener(new InternetSpeedBuilder.OnEventInternetSpeedListener() {
-            @Override
-            public void onDownloadProgress(int count, ProgressionModel progressModel) {
 
-            }
 
-            @Override
-            public void onUploadProgress(int count, ProgressionModel progressModel) {
-
-            }
-
-            @Override
-            public void onTotalProgress(int count, ProgressionModel progressModel) {
-                adapter.setDataList(count, progressModel);
-                if(progressModel.getProgressTotal()==50) {
-                    Log.e("MainJavaActivity", "onDownloadTotalProgress " + convertBytesReadableMB(progressModel.getDownloadSpeed().longValue())  );
-                }else if(progressModel.getProgressTotal()==100) {
-                    Log.e("MainJavaActivity", "onUploadTotalProgress " + convertBytesReadableMB(progressModel.getUploadSpeed().longValue()) );
-
-                }
-
-            }
-        });
-        builder.start("","", 1);//please use Skyline server urls
 
         //checkSpeed();
 
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                builder = new InternetSpeedBuilder(MainJavaActivity.this);
+                builder.setOnEventInternetSpeedListener(new InternetSpeedBuilder.OnEventInternetSpeedListener() {
+                    @Override
+                    public void onDownloadProgress(int count, ProgressionModel progressModel) {
+
+                    }
+
+                    @Override
+                    public void onUploadProgress(int count, ProgressionModel progressModel) {
+
+                    }
+
+                    @Override
+                    public void onTotalProgress(int count, ProgressionModel progressModel) {
+                        adapter.setDataList(count, progressModel);
+                        if(progressModel.getProgressTotal()==50) {
+                            Log.e("MainJavaActivity", "onDownloadTotalProgress " + convertBytesReadableMB(progressModel.getDownloadSpeed().longValue())  );
+                        }else if(progressModel.getProgressTotal()==100) {
+                            Log.e("MainJavaActivity", "onUploadTotalProgress " + convertBytesReadableMB(progressModel.getUploadSpeed().longValue()) );
+
+                        }
+
+                    }
+                });
+                builder.start("","", 1);//please use Skyline server urls
+            }
+        });
+
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                builder.stop();
+            }
+        });
     }
+
+
 
 
     private void checkSpeed(){
